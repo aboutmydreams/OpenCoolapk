@@ -1,6 +1,40 @@
-# opencoolapk
+# Open Coolapk
 
-A new Flutter project.
+使用Flutter实现酷安app
+=,=
+
+    下载源码:
+    git clone git@github.com:roykio/OpenCoolapk.git
+
+## android编译:
+    flutter build apk --release
+
+## android debug:
+    连接手机
+    允许usb调试
+    到本目录:
+        flutter run
+
+## 没有ios设备，也没有mac
+    故没有ios版编译教程
+
+## 在pc平台运行:
+    首先你要查看这两个项目
+        https://github.com/go-flutter-desktop/go-flutter
+        https://github.com/go-flutter-desktop/hover
+
+    你的电脑上要有配置好的golang环境
+    然后在控制台安装
+        go get -u github.com/go-flutter-desktop/hover
+
+    然后重启控制台，输入hover
+    如果有输出则安装成功
+    启动本项目:
+    到本项目目录下:
+        hover run
+    
+    hover还不支持release打包，性能会有限
+
 
 ## Getting Started
 
