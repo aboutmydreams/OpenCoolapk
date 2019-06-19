@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:opencoolapk/data/api/feed.dart';
 import 'package:opencoolapk/ui/action.dart';
 import 'package:opencoolapk/ui/page/datapage.dart';
 
@@ -14,28 +13,25 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   int _nowPageIndex = 0;
-  final List<Tab> _tabs = [
-    Tab(
+  final List<Widget> _tabs = [
+    Container(height: 26, child: Tab(
       text: "关注",
-    ),
-    Tab(
+    )),
+    Container(height: 26, child: Tab(
       text: "头条",
-    ),
-    Tab(
+    )),
+    Container(height: 26, child: Tab(
       text: "上榜",
-    ),
-    Tab(
+    )),
+    Container(height: 26, child: Tab(
       text: "话题",
-    ),
-    Tab(
-      text: "酷图",
-    ),
-    Tab(
+    )),
+    Container(height: 26, child: Tab(
       text: "问答",
-    ),
-    Tab(
+    )),
+    Container(height: 26, child: Tab(
       text: "视频",
-    ),
+    )),
   ];
   List<DataPage> _tabPages;
   TabController _tabController;
@@ -44,7 +40,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     _tabPages = _tabs.map((tab) {
-      return DataPage(tab.text, "/main/indexV8");
+      return DataPage("tab", "/main/indexV8");
     }).toList();
     _tabController = TabController(vsync: this, length: _tabs.length);
   }
@@ -90,12 +86,12 @@ class _HomePageState extends State<HomePage>
         IconButton(icon: Icon(Icons.notifications), onPressed: () {})
       ],
       bottom: _nowPageIndex == 0 // 只在页面1 显示
-          ? TabBar(
+          ? PreferredSize(child: TabBar(
               isScrollable: true,
               indicatorSize: TabBarIndicatorSize.label,
               tabs: _tabs,
               controller: _tabController,
-            )
+            ), preferredSize: Size(double.maxFinite, 30),)
           : null,
     );
   }

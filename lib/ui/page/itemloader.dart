@@ -199,11 +199,13 @@ class FeedItemLoader {
             padding: EdgeInsets.fromLTRB(0, 0, 0, 7),
             data: entity.message,
             defaultTextStyle: TextStyle(
+                fontSize: 15.8,
                 color: Theme.of(ctx).textTheme.body1.color,
                 fontWeight: FontWeight.w600),
             linkStyle: TextStyle(color: Theme.of(ctx).primaryColor),
-            onLinkTap: (v) {},
-            customRender: (node, child) {},
+            onLinkTap: (v) {
+              print(v);
+            }
           ),
           Builder(builder: (ctx) {
             if (entity.pic.length < 4) return Container();
