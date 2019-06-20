@@ -1,77 +1,15 @@
-import 'dart:io';
-import 'package:uuid/uuid.dart';
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
-import 'package:cookie_jar/cookie_jar.dart';
+import 'package:uuid/uuid.dart';
 
 class Api {
   static CookieJar cjar = CookieJar();
   static Dio dio = Dio();
   static bool _inited = false;
-
-  static init() {
-    cjar = CookieJar(ignoreExpires: true);
-    dio.interceptors.add(CookieManager(cjar));
-    cjar.saveFromResponse(Uri.https("api.coolapk.com", ""), [
-      Cookie("CONTAINERID",
-          "4e5f0b1a2e32f938a6519f55dd77765b70002fbb8133e5730bbe80f581b8e536|XQhuo|XQhue"),
-      Cookie("sec_tc", "AQAAAJSicE9VgAEAq1MWyuDtcSLw+WlZ")
-    ]);
-
-    dio.options.connectTimeout = 2000;
-    dio.options.receiveTimeout = 2000;
-    dio.options.sendTimeout = 2000;
-    dio.options.baseUrl = "https://api.coolapk.com/v6";
-    _inited = true;
-  }
-
-  static Future<Response> get(path,
-      {Map<String, dynamic> params,
-      Map<String, dynamic> data,
-      ContentType ctype}) {
-    if (!_inited) init();
-    return dio.get(
-      path,
-      queryParameters: params,
-      options: Options(
-          headers: buildHeader(), contentType: ctype ?? ContentType.json),
-    );
-  }
-
-  static Future<Response> getUri(Uri uri) {
-    if (!_inited) init();
-    return dio.getUri(uri, options: Options(headers: buildHeader()));
-  }
-
-  static Future<Response> postUri(Uri uri,
-      {Map<String, dynamic> data, ContentType ctype}) {
-    if (!_inited) init();
-    return dio.postUri(
-      uri,
-      data: FormData.from(data),
-      options: Options(
-          headers: buildHeader(),
-          contentType:
-              ctype ?? ContentType.parse("application/x-www-form-urlencoded")),
-    );
-  }
-
-  static post(path,
-      {Map<String, dynamic> params,
-      Map<String, dynamic> data,
-      ContentType ctype}) {
-    if (!_inited) init();
-    return dio.post(
-      path,
-      data: FormData.from(data),
-      queryParameters: params,
-      options: Options(
-          headers: buildHeader(),
-          contentType:
-              ctype ?? ContentType.parse("application/x-www-form-urlencoded")),
-    );
-  }
 
   static buildHeader() {
     return {
@@ -102,5 +40,68 @@ class Api {
         md5.convert(utf8.encode(base64.encode(utf8.encode(salt)))).toString();
     var hexTime = "0x" + ts.toRadixString(16);
     return saltMd5 + did + hexTime;
+  }
+
+  static Future<Response> get(path,
+      {Map<String, dynamic> params,
+      Map<String, dynamic> data,
+      ContentType ctype}) {
+    if (!_inited) init();
+    return dio.get(
+      path,
+      queryParameters: params,
+      options: Options(
+          headers: buildHeader(), contentType: ctype ?? ContentType.json),
+    );
+  }
+
+  static Future<Response> getUri(Uri uri) {
+    if (!_inited) init();
+    return dio.getUri(uri, options: Options(headers: buildHeader()));
+  }
+
+  static init() {
+    cjar = CookieJar(ignoreExpires: true);
+    dio.interceptors.add(CookieManager(cjar));
+    cjar.saveFromResponse(Uri.https("api.coolapk.com", ""), [
+      Cookie("CONTAINERID",
+          "4e5f0b1a2e32f938a6519f55dd77765b70002fbb8133e5730bbe80f581b8e536|XQhuo|XQhue"),
+      Cookie("sec_tc", "AQAAAJSicE9VgAEAq1MWyuDtcSLw+WlZ")
+    ]);
+
+    dio.options.connectTimeout = 2000;
+    dio.options.receiveTimeout = 2000;
+    dio.options.sendTimeout = 2000;
+    dio.options.baseUrl = "https://api.coolapk.com/v6";
+    _inited = true;
+  }
+
+  static post(path,
+      {Map<String, dynamic> params,
+      Map<String, dynamic> data,
+      ContentType ctype}) {
+    if (!_inited) init();
+    return dio.post(
+      path,
+      data: FormData.from(data),
+      queryParameters: params,
+      options: Options(
+          headers: buildHeader(),
+          contentType:
+              ctype ?? ContentType.parse("application/x-www-form-urlencoded")),
+    );
+  }
+
+  static Future<Response> postUri(Uri uri,
+      {Map<String, dynamic> data, ContentType ctype}) {
+    if (!_inited) init();
+    return dio.postUri(
+      uri,
+      data: FormData.from(data),
+      options: Options(
+          headers: buildHeader(),
+          contentType:
+              ctype ?? ContentType.parse("application/x-www-form-urlencoded")),
+    );
   }
 }

@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ActionPage extends StatefulWidget {
-  Animation<double> ani;
+  final Animation<double> ani;
   ActionPage(this.ani, {Key key}) : super(key: key);
 
   _ActionPageState createState() => _ActionPageState(ani);
@@ -12,14 +12,9 @@ class ActionPage extends StatefulWidget {
 
 class _ActionPageState extends State<ActionPage> {
   Animation<double> ani;
-  _ActionPageState(this.ani);
-
   List<Widget> actionButtons = [];
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  _ActionPageState(this.ani);
 
   @override
   Widget build(BuildContext context) {
@@ -74,28 +69,9 @@ class _ActionPageState extends State<ActionPage> {
     );
   }
 
-  _buildBottomBar() {
-    return ScaleTransition(
-      scale: ani,
-      child: BottomNavigationBar(
-        elevation: 0,
-        backgroundColor: Colors.black.withOpacity(0),
-        onTap: (_idx) {
-          Navigator.pop(context);
-        },
-        items: [
-          BottomNavigationBarItem(title: Container(), icon: Container()),
-          BottomNavigationBarItem(
-            title: Container(),
-            icon: Icon(
-              Icons.close,
-              color: Colors.white,
-            ),
-          ),
-          BottomNavigationBarItem(title: Container(), icon: Container())
-        ],
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
   }
 
   _buildActionButton({icon: Icons.edit, title: "标题", color: Colors.blue}) {
@@ -130,6 +106,30 @@ class _ActionPageState extends State<ActionPage> {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  _buildBottomBar() {
+    return ScaleTransition(
+      scale: ani,
+      child: BottomNavigationBar(
+        elevation: 0,
+        backgroundColor: Colors.black.withOpacity(0),
+        onTap: (_idx) {
+          Navigator.pop(context);
+        },
+        items: [
+          BottomNavigationBarItem(title: Container(), icon: Container()),
+          BottomNavigationBarItem(
+            title: Container(),
+            icon: Icon(
+              Icons.close,
+              color: Colors.white,
+            ),
+          ),
+          BottomNavigationBarItem(title: Container(), icon: Container())
+        ],
       ),
     );
   }

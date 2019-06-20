@@ -37,15 +37,6 @@ class _HomePageState extends State<HomePage>
   TabController _tabController;
 
   @override
-  void initState() {
-    super.initState();
-    _tabPages = _tabs.map((tab) {
-      return DataPage("tab", "/main/indexV8");
-    }).toList();
-    _tabController = TabController(vsync: this, length: _tabs.length);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: _buildAppBar(),
@@ -53,13 +44,13 @@ class _HomePageState extends State<HomePage>
         bottomNavigationBar: _buildBottomNavBar());
   }
 
-  _buildBody() {
-    return Container(
-      child: TabBarView(
-        controller: _tabController,
-        children: _tabPages,
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    _tabPages = _tabs.map((tab) {
+      return DataPage("tab", "/main/indexV8");
+    }).toList();
+    _tabController = TabController(vsync: this, length: _tabs.length);
   }
 
   _buildAppBar() {
@@ -93,6 +84,15 @@ class _HomePageState extends State<HomePage>
               controller: _tabController,
             ), preferredSize: Size(double.maxFinite, 30),)
           : null,
+    );
+  }
+
+  _buildBody() {
+    return Container(
+      child: TabBarView(
+        controller: _tabController,
+        children: _tabPages,
+      ),
     );
   }
 
