@@ -91,3 +91,4 @@ pubspec.lock
 doc/api/
 android/local.properties
 android/.gradle
+android/gradlew
