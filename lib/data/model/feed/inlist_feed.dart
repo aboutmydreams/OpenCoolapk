@@ -30,7 +30,7 @@ class Feed {
   int mediaType;
   String mediaPic;
   String mediaUrl;
-  int extraType;
+  var extraType;
   String extraKey;
   String extraTitle;
   String extraUrl;
