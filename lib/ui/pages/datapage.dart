@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:opencoolapk/data/api/feed.dart';
 import 'package:opencoolapk/data/model/feed/indexV8_list.dart';
@@ -7,8 +9,8 @@ import 'item/itemloader.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class DataPage extends StatefulWidget {
-  var sourceUrl = "";
-  var tag = "";
+  final sourceUrl;
+  final tag;
 
   DataPage(this.tag, this.sourceUrl, {Key key}) : super(key: key);
 
@@ -23,10 +25,20 @@ class DataPage extends StatefulWidget {
 
 class _DataPageState extends State<DataPage>
     with AutomaticKeepAliveClientMixin {
+      
   int page = 1;
-  String get lastItem => _data.length > 0
-      ? (_data[_data.length - 1] as Data).entityId.toString()
-      : "";
+  String get lastItem {
+    var fid = "";
+    _data.reversed.forEach((v) {
+      var data = v as Data;
+      if (data.entityId.toString().length > 6 && fid == '') {
+        fid = data.entityId.toString();
+        return;
+      }
+    });
+    return fid;
+  }
+
   List<dynamic> _data = [];
 
   var _hasSomeError = false;
@@ -55,13 +67,13 @@ class _DataPageState extends State<DataPage>
     return PreferredSize(
       preferredSize: Size(double.maxFinite, double.maxFinite),
       child: SmartRefresher(
-      controller: _refreshController,
-      enablePullUp: true,
-      enablePullDown: true,
-      onLoading: _nextPage,
-      onRefresh: _refresh,
-      child: _buildList(),
-    ),
+        controller: _refreshController,
+        enablePullUp: true,
+        enablePullDown: true,
+        onLoading: _nextPage,
+        onRefresh: _refresh,
+        child: _buildList(),
+      ),
     );
   }
 
@@ -116,4 +128,3 @@ class _DataPageState extends State<DataPage>
     _refreshController.dispose();
   }
 }
-

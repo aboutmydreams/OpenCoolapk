@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage>
       body: Row(
         children: <Widget>[
           Container(
-            width: 284,
+            width: 300,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
@@ -72,6 +72,16 @@ class _DrawerContentState extends State<DrawerContent> {
     return Expanded(
       child: ListView(
         children: <Widget>[
+          StoreConnector<GlobalState, GlobalState>(
+            converter: (store) => store.state,
+            builder: (context, state) {
+              if (!state.logged) return const SizedBox();
+              return Container(
+                width: double.maxFinite,
+                child: _buildUserInfoCardAction(context, state.user),
+              );
+            },
+          ),
           DrawerListTile("头条", Icons.home, () {
             setState(() {
               nowSelect = 0;
@@ -89,6 +99,57 @@ class _DrawerContentState extends State<DrawerContent> {
           }, () {}, 2, nowSelect),
         ],
       ),
+    );
+  }
+
+  _buildUserInfoCardAction(BuildContext context, UserInfo user) {
+    var tColor = Theme.of(context).textTheme.title.color;
+    return Wrap(
+      alignment: WrapAlignment.spaceAround,
+      children: <Widget>[
+        OutlineButton(
+          child: Text(
+            "动态",
+            style: TextStyle(color: tColor, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () {},
+        ),
+        OutlineButton(
+          child: Text(
+            "关注",
+            style: TextStyle(color: tColor, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () {},
+        ),
+        OutlineButton(
+          child: Text(
+            "粉丝",
+            style: TextStyle(color: tColor, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () {},
+        ),
+        OutlineButton(
+          child: Text(
+            "收藏",
+            style: TextStyle(color: tColor, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () {},
+        ),
+        OutlineButton(
+          child: Text(
+            "消息",
+            style: TextStyle(color: tColor, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () {},
+        ),
+        OutlineButton(
+          child: Text(
+            "设置",
+            style: TextStyle(color: tColor, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () {},
+        ),
+      ],
     );
   }
 }
@@ -156,38 +217,82 @@ class DrawerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 180,
+      height: 300,
       padding: EdgeInsets.all(0),
       child: Card(
-        child: Stack(
-          children: <Widget>[
-            StoreConnector<GlobalState, UserInfo>(
-                converter: (store) => store.state.nowUser,
-                builder: (context, state) {
-                  if (state == null) return Container();
-                  return Image.network(state.cover ?? "");
-                }),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: StoreConnector<GlobalState, UserInfo>(
-                  converter: (store) => store.state.nowUser,
-                  builder: (context, state) {
-                    if (state == null) {
-                      return FlatButton.icon(
-                          icon: Icon(Icons.person),
-                          label: Text("登录"),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .push(MaterialPageRoute(builder: (ctx) {
-                              return LoginPage();
-                            }));
-                          });
-                    } else {}
-                  }),
+          child: Stack(
+        children: <Widget>[
+          StoreConnector<GlobalState, UserInfo>(
+              converter: (store) => store.state.nowUser,
+              builder: (context, state) {
+                if (state == null) return const SizedBox();
+                return Image.network(
+                  state.cover ?? "",
+                  width: double.maxFinite,
+                  fit: BoxFit.cover,
+                );
+              }),
+          Container(
+            decoration: new BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.5),
+                    Colors.black.withOpacity(0.35),
+                    Colors.black.withOpacity(0.1),
+                    Colors.black.withOpacity(0.0),
+                    Colors.black.withOpacity(0.0)
+                  ]),
             ),
-          ],
-        ),
+          ),
+          StoreConnector<GlobalState, GlobalState>(
+            converter: (store) => store.state,
+            builder: (context, state) {
+              if (!state.logged) {
+                return Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Card(
+                    child: OutlineButton.icon(
+                      icon: Icon(Icons.person),
+                      label: Text("登录"),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (ctx) {
+                          return LoginPage();
+                        }));
+                      },
+                    ),
+                  ),
+                );
+              } else {
+                return Align(
+                  alignment: Alignment.bottomCenter,
+                  child: _buildUserInfoCard(context, state.user),
+                );
+              }
+            },
+          )
+        ],
+      )),
+    );
+  }
+
+  _buildUserInfoCard(BuildContext context, UserInfo user) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            user.username,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Theme.of(context).primaryTextTheme.title.color),
+          ),
+        ],
       ),
     );
   }
-}
+} // _buildUserInfoCard

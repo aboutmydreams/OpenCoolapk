@@ -11,14 +11,7 @@ import 'data/api/api.dart';
 void main() {
   debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
   Api.init();
-  final store = Store<GlobalState>(reducer, initialState: GlobalState.init());
+  final store = Store<GlobalState>(GlobalState.reducer, initialState: GlobalState.init());
   runApp(OpenCoolapk(store));
 }
 
-GlobalState reducer(GlobalState state, action) {
-  switch (action) {
-    case Action.LOGIN:
-      break;
-  }
-  return state;
-}

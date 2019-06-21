@@ -182,14 +182,14 @@ class FeedFeedItem extends StatelessWidget {
                       Text(entity.ttitle)
                     ],
                   ))
-              : Container(),
+              : const SizedBox(),
         ],
       ),
     );
   }
 
   static _buildContentImage(ctx, entity) {
-    if (entity.pic.length < 4) return Container();
+    if (entity.pic.length < 4) return const SizedBox();
     var pxxp = entity.pic.substring(entity.pic.toString().indexOf("@") + 1,
         entity.pic.toString().lastIndexOf("."));
     var sr = (int.parse(pxxp.split("x")[0]) / int.parse(pxxp.split("x")[1]));
@@ -200,7 +200,7 @@ class FeedFeedItem extends StatelessWidget {
       wid = Row(
         children: entity.picArr.map<Widget>((pic) {
           js++;
-          if (js <= MediaQuery.of(ctx).size.width / 300) {
+          if (js <= ((MediaQuery.of(ctx).size.width / 300) > 3 ? 3 : MediaQuery.of(ctx).size.width / 300)) {
             return Expanded(
               child: Container(
                 height: double.maxFinite,
@@ -225,7 +225,7 @@ class FeedFeedItem extends StatelessWidget {
               ),
             );
           } else {
-            return Container();
+            return const SizedBox();
           }
         }).toList(),
       );

@@ -84,15 +84,15 @@ class _ActionPageState extends State<ActionPage> {
           Navigator.pop(context);
         },
         items: [
-          BottomNavigationBarItem(title: Container(), icon: Container()),
+          BottomNavigationBarItem(title: const SizedBox(), icon: const SizedBox()),
           BottomNavigationBarItem(
-            title: Container(),
+            title: const SizedBox(),
             icon: Icon(
               Icons.close,
               color: Colors.white,
             ),
           ),
-          BottomNavigationBarItem(title: Container(), icon: Container())
+          BottomNavigationBarItem(title: const SizedBox(), icon: const SizedBox())
         ],
       ),
     );

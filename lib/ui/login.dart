@@ -1,7 +1,14 @@
-import 'dart:convert';
-
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:opencoolapk/data/api/auth.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:opencoolapk/data/api/api.dart';
+import 'package:opencoolapk/data/api/user.dart';
+import 'package:opencoolapk/redux/global.dart';
+
+// 主要的登录逻辑：
+// 保存参数到cookieJar,获取用户数据设置到GlobalState, 通知redux改变状态，
+// 我知道很乱....
 
 class LoginPage extends StatefulWidget {
   @override
@@ -35,9 +42,11 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: BackButtonIcon(), onPressed: () {
-          Navigator.pop(context);
-        }),
+        leading: IconButton(
+            icon: BackButtonIcon(),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
         title: Text("登录"),
       ),
       body: Center(
@@ -50,10 +59,10 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  String sessid;
-  String token;
-  String uid;
-  String username;
+  var sessidKey = GlobalKey<FormFieldState>();
+  var tokenKey = GlobalKey<FormFieldState>();
+  var uidKey = GlobalKey<FormFieldState>();
+  var usernameKey = GlobalKey<FormFieldState>();
 
   //
   _build() {
@@ -61,58 +70,58 @@ class _LoginPageState extends State<LoginPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         TextFormField(
+          key: sessidKey,
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(
             filled: true,
             hintText: "SESSID",
           ),
-          onFieldSubmitted: (v) {
-            setState(() {
-              sessid = v;
-            });
-          },
         ),
         TextFormField(
+          key: tokenKey,
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(
             filled: true,
             hintText: "token",
           ),
-          onFieldSubmitted: (v) {
-            setState(() {
-              token = v;
-            });
-          },
         ),
         TextFormField(
+          key: uidKey,
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(
             filled: true,
             hintText: "uid",
           ),
-          onFieldSubmitted: (v) {
-            setState(() {
-              uid = v;
-            });
-          },
         ),
         TextFormField(
+          key: usernameKey,
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(
             filled: true,
             hintText: "username",
           ),
-          onFieldSubmitted: (v) {
-            setState(() {
-              username = v;
-            });
-          },
         ),
       ],
     );
   }
 
   Widget _buildForm() {
+    Api.cjar.loadForRequest(Uri.parse("https://coolapk.com")).forEach((c) {
+      switch (c.name) {
+        case "SESSID":
+          this.sessidKey.currentState.didChange(c.value);
+          break;
+        case "token":
+          this.tokenKey.currentState.didChange(c.value);
+          break;
+        case "uid":
+          this.uidKey.currentState.didChange(c.value);
+          break;
+        case "username":
+          this.usernameKey.currentState.didChange(c.value);
+          break;
+      }
+    });
     return Form(
       child: Column(
         children: <Widget>[
@@ -126,9 +135,97 @@ class _LoginPageState extends State<LoginPage> {
           Expanded(
             child: _build(),
           ),
-          RaisedButton(
-            onPressed: () {},
-            child: Text("登入"),
+          StoreConnector<GlobalState, GlobalState>(
+              converter: (store) => store.state,
+              builder: (context, state) {
+                if (state.nowUser == null) return const SizedBox();
+                return Text("登录成功");
+              }),
+          StoreConnector<GlobalState, VoidCallback>(
+            converter: (store) {
+              return () => store.dispatch(Action.LOGGED);
+            },
+            builder: (ctx, callback) {
+              return RaisedButton(
+                onPressed: () {
+                  var sessid = (sessidKey.currentState.value);
+                  var token = tokenKey.currentState.value;
+                  var uid = uidKey.currentState.value;
+                  var un = usernameKey.currentState.value;
+                  Api.setCookies(Uri.parse("https://coolapk.com"), [
+                    Cookie.fromSetCookieValue(
+                        "token=${Uri.encodeComponent(token)}; path=/; domain=.coolapk.com"),
+                    Cookie.fromSetCookieValue(
+                        "uid=${Uri.encodeComponent(uid)}; path=/; domain=.coolapk.com"),
+                    Cookie.fromSetCookieValue(
+                        "username=${Uri.encodeComponent(Uri.decodeComponent(un))}; path=/; domain=.coolapk.com"),
+                    Cookie.fromSetCookieValue(
+                        "SESSID=${Uri.encodeComponent(sessid)}; path=/; domain=.coolapk.com")
+                  ]);
+                  var context2 = context;
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      UserApi.getLoggedUserInfo(uid).then((info) {
+                        var mobile = info.mobile; // 用这个确定是否是登录成功
+                        if (mobile == null || mobile.toString() == "") {
+                          throw new Exception("未成功登录");
+                        } else {
+                          GlobalState.instance.user = info;
+                          callback();
+                          showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (ctx) {
+                              return AlertDialog(
+                                actions: <Widget>[
+                                  FlatButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      Navigator.pop(ctx);
+                                      Navigator.pop(context2);
+                                    },
+                                    child: Text("ok"),
+                                  ),
+                                ],
+                                title: Text("登录成功!"),
+                                content: Text(info.username + "~ 欢迎回来~"),
+                              );
+                            },
+                          );
+                        }
+                      }).catchError((er) {
+                        Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder: (ctx) {
+                            return AlertDialog(
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () {
+                                    Navigator.pop(ctx);
+                                  },
+                                  child: Text("ok"),
+                                ),
+                              ],
+                              title: Text("登录失败"),
+                              content: Text(er.toString()),
+                            );
+                          },
+                        );
+                      });
+                      callback();
+                      return AlertDialog(
+                        title: Text("登录中"),
+                        semanticLabel: "登陆中",
+                      );
+                    },
+                  );
+                },
+                child: Text("登入"),
+              );
+            },
           ),
           FlatButton(
             onPressed: () {
