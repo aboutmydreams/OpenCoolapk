@@ -25,7 +25,7 @@ class DataPage extends StatefulWidget {
 
 class _DataPageState extends State<DataPage>
     with AutomaticKeepAliveClientMixin {
-      
+
   int page = 1;
   String get lastItem {
     var fid = "";
@@ -43,19 +43,9 @@ class _DataPageState extends State<DataPage>
 
   var _hasSomeError = false;
 
-  ScrollController _scrollController = ScrollController();
-
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-              _scrollController.position.maxScrollExtent &&
-          !_refreshController.isLoading &&
-          !_refreshController.isRefresh) {
-        _nextPage();
-      }
-    });
     _refresh();
   }
 
@@ -114,7 +104,6 @@ class _DataPageState extends State<DataPage>
   _buildList() {
     return ListView.builder(
       itemCount: _data.length,
-      controller: _scrollController,
       itemBuilder: (ctx, pos) {
         return FeedItem(_data[pos]);
       },
@@ -124,7 +113,6 @@ class _DataPageState extends State<DataPage>
   @override
   void dispose() {
     super.dispose();
-    _scrollController.dispose();
     _refreshController.dispose();
   }
 }
