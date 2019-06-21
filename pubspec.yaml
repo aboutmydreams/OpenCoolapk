@@ -16,6 +16,8 @@ dependencies:
   pull_to_refresh: ^1.4.5
   carousel_slider: any
   flutter_html: any
+  redux: any
+  flutter_redux: any
 
 dev_dependencies:
   flutter_test:

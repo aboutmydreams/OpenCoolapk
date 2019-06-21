@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:opencoolapk/data/api/feed.dart';
 import 'package:opencoolapk/data/model/feed/indexV8_list.dart';
 
-import 'itemloader.dart';
+import 'item/itemloader.dart';
 
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -52,13 +52,16 @@ class _DataPageState extends State<DataPage>
 
   @override
   Widget build(BuildContext context) {
-    return SmartRefresher(
+    return PreferredSize(
+      preferredSize: Size(double.maxFinite, double.maxFinite),
+      child: SmartRefresher(
       controller: _refreshController,
       enablePullUp: true,
       enablePullDown: true,
       onLoading: _nextPage,
       onRefresh: _refresh,
       child: _buildList(),
+    ),
     );
   }
 

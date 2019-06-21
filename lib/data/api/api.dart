@@ -39,19 +39,19 @@ class Api {
     );
   }
 
-  static Future<Response> getUri(Uri uri) {
+  static Future<Response> getUri(Uri uri, {ResponseType responseType}) {
     if (!_inited) init();
-    return dio.getUri(uri, options: Options(headers: buildHeader()));
+    return dio.getUri(uri, options: Options(headers: buildHeader(), responseType:  responseType));
   }
 
   static Future<Response> postUri(Uri uri,
-      {Map<String, dynamic> data, ContentType ctype}) {
+      {Map<String, dynamic> data, ContentType ctype, needHeader: true}) {
     if (!_inited) init();
     return dio.postUri(
       uri,
       data: FormData.from(data),
       options: Options(
-          headers: buildHeader(),
+          headers: needHeader ? buildHeader() : {},
           contentType:
               ctype ?? ContentType.parse("application/x-www-form-urlencoded")),
     );
