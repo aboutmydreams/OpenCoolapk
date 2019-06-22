@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
-import 'package:flutter/material.dart' show runApp;
+import 'package:flutter/material.dart' show TargetPlatform, runApp;
 import 'package:opencoolapk/main.dart' show OpenCoolapk;
 import 'package:opencoolapk/redux/global.dart';
 import 'package:redux/redux.dart';
