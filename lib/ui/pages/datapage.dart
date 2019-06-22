@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:opencoolapk/data/api/feed.dart';
 import 'package:opencoolapk/data/model/feed/indexV8_list.dart';
@@ -8,18 +6,20 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'item/itemloader.dart';
 
 class DataPage extends StatefulWidget {
-  final String sourceUrl;
-  final String tag;
+  final String title;
+  final IconData icon;
+  final Function dataMethod;
+  final int pageIndex;
+  final GlobalKey<_DataPageState> key;
 
-  DataPage(this.tag, this.sourceUrl, {Key key}) : super(key: key);
+  DataPage(this.title, this.icon, this.dataMethod, this.pageIndex, this.key) : super(key: key);
 
-  _DataPageState createState() {
-    return _DataPageState();
-  }
+  @override
+  _DataPageState createState() => _DataPageState();
 
-  Future<List<dynamic>> getData() {
-    return Future.value();
-  }
+  // Future<List<dynamic>> getData() {
+  //   return Future.value();
+  // }
 }
 
 class _DataPageState extends State<DataPage>
@@ -84,6 +84,10 @@ class _DataPageState extends State<DataPage>
   Future _nextPage() async {
     this.page++;
     this._fetchData(page: this.page, lastItem: this.lastItem);
+  }
+
+  refresh() {
+    _refreshController.requestRefresh();
   }
 
   Future _refresh() async {
