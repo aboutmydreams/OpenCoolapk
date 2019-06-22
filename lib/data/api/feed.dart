@@ -7,7 +7,7 @@ class FeedApi {
     try {
       var resp = await Api.getI("/main/indexV8", params: {"page": page, "lastItem": lastItem});
       return Future.value(IndexV8List.fromJson(resp.data));
-    }catch(e) {
+    } catch (e) {
       return Future.error(e);
     }
   }
