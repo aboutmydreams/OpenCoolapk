@@ -7,8 +7,8 @@ import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
 
 class Api {
-  static CookieJar cjar = CookieJar();
-  static Dio dio = Dio();
+  static CookieJar cjar;
+  static final Dio dio = Dio();
   static bool _inited = false;
 
   static buildHeader() {
@@ -42,7 +42,15 @@ class Api {
     return saltMd5 + did + hexTime;
   }
 
-  static Future<Response> get(path,
+  static setCookie(uri, key, value) {
+    cjar.saveFromResponse(uri, [Cookie(key, value)]);
+  }
+
+  static setCookies(uri, List<Cookie> cookies) {
+    cjar.saveFromResponse(uri, cookies);
+  }
+
+  static Future<Response> getI(path,
       {Map<String, dynamic> params,
       Map<String, dynamic> data,
       ContentType ctype}) {
@@ -51,13 +59,19 @@ class Api {
       path,
       queryParameters: params,
       options: Options(
-          headers: buildHeader(), contentType: ctype ?? ContentType.json),
+          cookies: cjar.loadForRequest(Uri.parse(dio.options.baseUrl + path)),
+          headers: buildHeader(),
+          contentType: ctype ?? ContentType.json),
     );
   }
 
-  static Future<Response> getUri(Uri uri) {
+  static Future<Response> getUri(Uri uri, {ResponseType responseType}) {
     if (!_inited) init();
-    return dio.getUri(uri, options: Options(headers: buildHeader()));
+    return dio.getUri(uri,
+        options: Options(
+            cookies: cjar.loadForRequest(uri),
+            headers: buildHeader(),
+            responseType: responseType));
   }
 
   static init() {
@@ -76,6 +90,20 @@ class Api {
     _inited = true;
   }
 
+  static Future<Response> postUri(Uri uri,
+      {Map<String, dynamic> data, ContentType ctype, needHeader: true}) {
+    if (!_inited) init();
+    return dio.postUri(
+      uri,
+      data: FormData.from(data),
+      options: Options(
+        cookies: cjar.loadForRequest(uri),
+          headers: needHeader ? buildHeader() : {},
+          contentType:
+              ctype ?? ContentType.parse("application/x-www-form-urlencoded")),
+    );
+  }
+
   static post(path,
       {Map<String, dynamic> params,
       Map<String, dynamic> data,
@@ -86,19 +114,7 @@ class Api {
       data: FormData.from(data),
       queryParameters: params,
       options: Options(
-          headers: buildHeader(),
-          contentType:
-              ctype ?? ContentType.parse("application/x-www-form-urlencoded")),
-    );
-  }
-
-  static Future<Response> postUri(Uri uri,
-      {Map<String, dynamic> data, ContentType ctype}) {
-    if (!_inited) init();
-    return dio.postUri(
-      uri,
-      data: FormData.from(data),
-      options: Options(
+        cookies: cjar.loadForRequest(Uri.parse(dio.options.baseUrl + path)),
           headers: buildHeader(),
           contentType:
               ctype ?? ContentType.parse("application/x-www-form-urlencoded")),
