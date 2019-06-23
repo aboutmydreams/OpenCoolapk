@@ -15,6 +15,7 @@ class HomeDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 300,
+      color: Theme.of(context).cardColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -191,7 +192,7 @@ class _DrawerListTile extends StatelessWidget {
       padding: EdgeInsets.all(8),
       child: FlatButton(
         onPressed: onPressed,
-        color: _getColor(context, text: false).withOpacity(0.5),
+        color: _getColor(context, text: false),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -218,13 +219,13 @@ class _DrawerListTile extends StatelessWidget {
       if (text) {
         return Theme.of(ctx).primaryTextTheme.title.color;
       } else {
-        return Theme.of(ctx).primaryColor;
+        return Theme.of(ctx).primaryColor.withOpacity(0.5);
       }
     } else {
       if (text) {
         return Theme.of(ctx).textTheme.title.color;
       } else {
-        return Theme.of(ctx).cardColor;
+        return Theme.of(ctx).primaryColor.withOpacity(0.1);
       }
     }
   }

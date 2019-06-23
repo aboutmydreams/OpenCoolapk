@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:opencoolapk/data/model/card/feed_scroll_card.dart';
 import 'package:opencoolapk/data/model/card/icon_link_grid_card.dart';
+import 'package:opencoolapk/data/model/card/icon_mini_grid_card.dart';
+import 'package:opencoolapk/data/model/card/image_text_scroll_card.dart';
 import 'package:opencoolapk/data/model/feed/inlist_feed.dart';
 import 'package:opencoolapk/data/model/card/image_carousel_card_1.dart';
 import 'package:opencoolapk/data/model/feed/indexV8_list.dart';
 import 'package:opencoolapk/ui/pages/item/carouselcard.dart';
 import 'package:opencoolapk/ui/pages/item/feedfeed.dart';
+import 'package:opencoolapk/ui/pages/item/feedscroll_card.dart';
 import 'package:opencoolapk/ui/pages/item/iconlink_gridcard.dart';
+import 'package:opencoolapk/ui/pages/item/iconmini_gridcard.dart';
+import 'package:opencoolapk/ui/pages/item/imagetext_scrollcard.dart';
 import 'package:opencoolapk/ui/pages/item/refreshcard.dart';
 import 'package:opencoolapk/ui/pages/item/textlink_listcard.dart';
 
@@ -63,6 +69,29 @@ class FeedItemLoader {
                 break;
             }
             break;
+          case "imageTextScrollCard":
+            return ImageTextScrollCardItem(
+                ImageTextScrollCard.fromJson(entity.source));
+            break;
+          case "feedScrollCard":
+            switch (entity.title) {
+              case "精彩回答":
+                return FeedScrollCardItemTypeAnswer(
+                    FeedScrollCardTypeAnswer.fromJson(entity.source));
+                break;
+              case "等你来答":
+                return FeedScrollCardItemTypeQuestion(
+                    FeedScrollCardTypeQuestion.fromJson(entity.source));
+                break;
+            }
+            break;
+          case "iconMiniGridCard":
+            return IconMiniGridCardItem(
+                IconMiniGridCard.fromJson(entity.source));
+            break;
+          case "listCard":
+            return const SizedBox(); // 大概是广告
+            break;
         }
         break;
       case "feed":
@@ -87,6 +116,7 @@ class FeedItemLoader {
         children: <Widget>[
           Text("未实现的"),
           Text(entity.title),
+          Text(entity.source.toString()),
           Text(entity.entityType),
           Text(entity.entityTemplate)
         ],
