@@ -237,66 +237,60 @@ class _DrawerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 300,
-      padding: EdgeInsets.all(0),
-      child: Card(
-          child: Stack(
-        children: <Widget>[
-          StoreConnector<GlobalState, UserInfo>(
-              converter: (store) => store.state.nowUser,
-              builder: (context, state) {
-                if (state == null) return const SizedBox();
-                return Image.network(
-                  state.cover ?? "",
-                  width: double.maxFinite,
-                  fit: BoxFit.cover,
-                );
-              }),
-          Container(
-            decoration: new BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.5),
-                    Colors.black.withOpacity(0.35),
-                    Colors.black.withOpacity(0.1),
-                    Colors.black.withOpacity(0.0),
-                    Colors.black.withOpacity(0.0)
-                  ]),
-            ),
-          ),
-          StoreConnector<GlobalState, GlobalState>(
-            converter: (store) => store.state,
-            builder: (context, state) {
-              if (!state.logged) {
-                return Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Card(
-                    child: OutlineButton.icon(
-                      icon: Icon(Icons.person),
-                      label: Text("登录"),
-                      onPressed: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (ctx) {
-                          return LoginPage();
-                        }));
-                      },
+    return StoreConnector<GlobalState, GlobalState>(
+        converter: (store) => store.state,
+        builder: (context, state) {
+          if (!state.logged) {
+            return Padding(
+              padding: EdgeInsets.all(8),
+              child: Align(
+                alignment: Alignment.center,
+                child: OutlineButton.icon(
+                  icon: Icon(Icons.person),
+                  label: Text("登录"),
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (ctx) {
+                      return LoginPage();
+                    }));
+                  },
+                ),
+              ),
+            );
+          }
+          return Container(
+              height: 300,
+              padding: EdgeInsets.all(0),
+              child: Card(
+                child: Stack(
+                  children: <Widget>[
+                    Image.network(
+                      state.user.cover ?? "",
+                      width: double.maxFinite,
+                      fit: BoxFit.cover,
                     ),
-                  ),
-                );
-              } else {
-                return Align(
-                  alignment: Alignment.bottomCenter,
-                  child: _buildUserInfoCard(context, state.user),
-                );
-              }
-            },
-          )
-        ],
-      )),
-    );
+                    Container(
+                      decoration: new BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              Colors.black.withOpacity(0.5),
+                              Colors.black.withOpacity(0.35),
+                              Colors.black.withOpacity(0.1),
+                              Colors.black.withOpacity(0.0),
+                              Colors.black.withOpacity(0.0)
+                            ]),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: _buildUserInfoCard(context, state.user),
+                    ),
+                  ],
+                ),
+              ));
+        });
   }
 
   _buildUserInfoCard(BuildContext context, UserInfo user) {

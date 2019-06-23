@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:opencoolapk/data/model/card/feed_scroll_card.dart';
 
+import 'feedfeed.dart';
+
 class FeedScrollCardItemTypeAnswer extends StatelessWidget {
   final FeedScrollCardTypeAnswer entity;
   const FeedScrollCardItemTypeAnswer(this.entity, {Key key}) : super(key: key);
@@ -10,8 +12,16 @@ class FeedScrollCardItemTypeAnswer extends StatelessWidget {
   Widget build(BuildContext context) {
     return _Item(
         this.entity.entities.map((e) {
-          return _ItemData(e.userInfo, e.title, e.message, e.info, e.infoHtml,
-              e.deviceTitle);
+          return _ItemData(
+              e.userInfo,
+              e.title,
+              e.message,
+              e.info,
+              e.infoHtml,
+              e.deviceTitle,
+              e.userAvatar,
+              e.username,
+              entity.source.toString());
         }).toList(),
         "精彩回答");
   }
@@ -26,8 +36,16 @@ class FeedScrollCardItemTypeQuestion extends StatelessWidget {
   Widget build(BuildContext context) {
     return _Item(
         this.entity.entities.map((e) {
-          return _ItemData(e.userInfo, e.title, e.message, e.info, e.infoHtml,
-              e.deviceTitle);
+          return _ItemData(
+              e.userInfo,
+              e.title,
+              e.message,
+              e.info,
+              e.infoHtml,
+              e.deviceTitle,
+              e.userAvatar,
+              e.username,
+              entity.source.toString());
         }).toList(),
         "等你来答");
   }
@@ -36,12 +54,15 @@ class FeedScrollCardItemTypeQuestion extends StatelessWidget {
 class _ItemData {
   final UserInfo userInfo;
   final String title;
+  final String userAvatar;
+  final String userName;
   final String content;
   final String infoHtml;
   final String info;
   final String deviceTitle;
+  final String sourceStr;
   _ItemData(this.userInfo, this.title, this.content, this.info, this.infoHtml,
-      this.deviceTitle);
+      this.deviceTitle, this.userAvatar, this.userName, this.sourceStr);
 }
 
 class _Item extends StatelessWidget {
@@ -111,9 +132,15 @@ class _Item extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.fromLTRB(16, 8, 0, 0),
-                  child: _buildCardDetailHead(context, data),
-                ),
+                    padding: EdgeInsets.fromLTRB(16, 8, 0, 0),
+                    child: FeedHeadItem(
+                        data.userName,
+                        data.userAvatar,
+                        data.infoHtml,
+                        data.info,
+                        data.deviceTitle,
+                        data.sourceStr,
+                        (type) {})),
                 Padding(
                   padding: EdgeInsets.fromLTRB(16, 0, 16, 6),
                   child: Text(
