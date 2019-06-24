@@ -38,7 +38,7 @@
 
 ## 预览
     
-![image](https://github.com/roykio/OpenCoolapk/tree/master/_pre/pre1.png)
+![image](https://raw.githubusercontent.com/roykio/OpenCoolapk/master/_pre/pre1.png)
 
 ## Getting Started
 
