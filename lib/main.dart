@@ -24,6 +24,7 @@ class OpenCoolapk extends StatelessWidget {
           title: 'Open Coolapk',
           theme: ThemeData(
             primarySwatch: Colors.purple,
+            fontFamily: "SourceHanSansSC-Light"
           ),
           home: HomePage(),
         ));

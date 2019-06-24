@@ -36,6 +36,9 @@
 ## 没有ios设备，也没有mac
     故没有ios版编译教程
 
+## 预览
+    
+![image](https://github.com/roykio/OpenCoolapk/tree/master/_pre/pre1.png)
 
 ## Getting Started
 

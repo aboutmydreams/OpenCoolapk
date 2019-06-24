@@ -17,7 +17,7 @@ class FeedFeedItem extends StatelessWidget {
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-            return FeedDetailPage(Data.fromJson(entity.source));
+            return FeedDetailPage(entity.entityId.toString(), entity.title);
           }));
         }, // 点击事件
         child: Padding(
