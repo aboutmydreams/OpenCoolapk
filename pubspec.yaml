@@ -18,6 +18,7 @@ dependencies:
   flutter_html: any
   redux: any
   flutter_redux: any
+  shared_preferences: any
 
 dev_dependencies:
   flutter_test:

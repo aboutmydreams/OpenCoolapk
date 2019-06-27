@@ -50,6 +50,19 @@ class Api {
     cjar.saveFromResponse(uri, cookies);
   }
 
+  static setLoginInfo(sessid, token, uid, un) {
+    setCookies(Uri.parse("https://coolapk.com"), [
+      Cookie.fromSetCookieValue(
+          "token=${Uri.encodeComponent(token)}; path=/; domain=.coolapk.com"),
+      Cookie.fromSetCookieValue(
+          "uid=${Uri.encodeComponent(uid)}; path=/; domain=.coolapk.com"),
+      Cookie.fromSetCookieValue(
+          "username=${Uri.encodeComponent(Uri.decodeComponent(un))}; path=/; domain=.coolapk.com"),
+      Cookie.fromSetCookieValue(
+          "SESSID=${Uri.encodeComponent(sessid)}; path=/; domain=.coolapk.com")
+    ]);
+  }
+
   static Future<Response> getI(path,
       {Map<String, dynamic> params,
       Map<String, dynamic> data,
@@ -97,7 +110,7 @@ class Api {
       uri,
       data: FormData.from(data),
       options: Options(
-        cookies: cjar.loadForRequest(uri),
+          cookies: cjar.loadForRequest(uri),
           headers: needHeader ? buildHeader() : {},
           contentType:
               ctype ?? ContentType.parse("application/x-www-form-urlencoded")),
@@ -114,7 +127,7 @@ class Api {
       data: FormData.from(data),
       queryParameters: params,
       options: Options(
-        cookies: cjar.loadForRequest(Uri.parse(dio.options.baseUrl + path)),
+          cookies: cjar.loadForRequest(Uri.parse(dio.options.baseUrl + path)),
           headers: buildHeader(),
           contentType:
               ctype ?? ContentType.parse("application/x-www-form-urlencoded")),

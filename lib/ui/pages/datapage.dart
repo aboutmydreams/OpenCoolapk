@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:opencoolapk/data/api/feed.dart';
 import 'package:opencoolapk/data/model/feed/indexV8_list.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import 'item/itemloader.dart';
+
+enum DataFrom { indexV8 }
 
 class DataPage extends StatefulWidget {
   final String title;
   final IconData icon;
-  final Function dataMethod;
+  final DataFrom dataFrom;
   final int pageIndex;
   final GlobalKey<_DataPageState> key;
 
-  DataPage(this.title, this.icon, this.dataMethod, this.pageIndex, this.key) : super(key: key);
+  DataPage(this.title, this.icon, this.dataFrom, this.pageIndex, this.key)
+      : super(key: key);
 
   @override
   _DataPageState createState() => _DataPageState();
@@ -64,8 +66,16 @@ class _DataPageState extends State<DataPage>
   Future _fetchData({page: 1, lastItem: ""}) async {
     try {
       print(page.toString() + "||" + lastItem);
-      var resp =
-          await FeedApi.indexV8(page: page.toString(), lastItem: lastItem);
+      var resp;
+      switch (widget.dataFrom) {
+        case DataFrom.indexV8:
+          resp =
+              await FeedApi.indexV8(page: page.toString(), lastItem: lastItem);
+          break;
+        default:
+          resp =
+              await FeedApi.indexV8(page: page.toString(), lastItem: lastItem);
+      }
       setState(() {
         _data.addAll(resp.data);
       });

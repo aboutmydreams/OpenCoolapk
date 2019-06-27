@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:opencoolapk/data/model/user.dart';
 import 'package:opencoolapk/redux/global.dart';
+import 'package:opencoolapk/ui/setting.dart';
 
 import 'home.dart' show HomePageState;
 import 'login.dart';
@@ -167,7 +168,15 @@ class _DrawerContentState extends State<_DrawerContent> {
             "设置",
             style: TextStyle(color: tColor, fontWeight: FontWeight.bold),
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return SettingPage();
+            })).then((value) {
+              if (value) { // 需要重载界面
+                setState((){});
+              }
+            });
+          },
         ),
       ],
     );

@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:opencoolapk/data/api/api.dart';
 import 'package:opencoolapk/data/api/user.dart';
+import 'package:opencoolapk/data/sharedpreference.dart';
 import 'package:opencoolapk/redux/global.dart';
 
 // 主要的登录逻辑：
@@ -36,7 +38,17 @@ class _LoginPageState extends State<LoginPage> {
     //   });
     // });
     // captchaImageUrl = authRequest.getCaptchaImageUrl();
+    Api.cjar.loadForRequest(Uri.parse("https://coolapk.com")).forEach((c) {
+      oldValues[c.name] = c.value;
+    });
   }
+
+  Map<String, String> oldValues = {
+    "SESSID": "",
+    "token": "",
+    "uid": "",
+    "username": ""
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +82,7 @@ class _LoginPageState extends State<LoginPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         TextFormField(
+          controller: TextEditingController(text: oldValues['SESSID']),
           key: sessidKey,
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(
@@ -78,6 +91,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         TextFormField(
+          controller: TextEditingController(text: oldValues['token']),
           key: tokenKey,
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(
@@ -86,6 +100,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         TextFormField(
+          controller: TextEditingController(text: oldValues['uid']),
           key: uidKey,
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(
@@ -94,6 +109,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         TextFormField(
+          controller: TextEditingController(text: oldValues['username']),
           key: usernameKey,
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(
@@ -106,23 +122,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildForm() {
-    Api.cjar.loadForRequest(Uri.parse("https://coolapk.com")).forEach((c) {
-      switch (c.name) {
-        case "SESSID":
-          this.sessidKey.currentState.didChange(c.value);
-          break;
-        case "token":
-          this.tokenKey.currentState.didChange(c.value);
-          break;
-        case "uid":
-          this.uidKey.currentState.didChange(c.value);
-          break;
-        case "username":
-          this.usernameKey.currentState.didChange(c.value);
-          break;
-      }
-    });
-    return Form(
+    final form = Form(
       child: Column(
         children: <Widget>[
           Text(
@@ -152,16 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                   var token = tokenKey.currentState.value;
                   var uid = uidKey.currentState.value;
                   var un = usernameKey.currentState.value;
-                  Api.setCookies(Uri.parse("https://coolapk.com"), [
-                    Cookie.fromSetCookieValue(
-                        "token=${Uri.encodeComponent(token)}; path=/; domain=.coolapk.com"),
-                    Cookie.fromSetCookieValue(
-                        "uid=${Uri.encodeComponent(uid)}; path=/; domain=.coolapk.com"),
-                    Cookie.fromSetCookieValue(
-                        "username=${Uri.encodeComponent(Uri.decodeComponent(un))}; path=/; domain=.coolapk.com"),
-                    Cookie.fromSetCookieValue(
-                        "SESSID=${Uri.encodeComponent(sessid)}; path=/; domain=.coolapk.com")
-                  ]);
+                  Api.setLoginInfo(sessid, token, uid, un);
                   var context2 = context;
                   showDialog(
                     barrierDismissible: false,
@@ -172,6 +163,12 @@ class _LoginPageState extends State<LoginPage> {
                         if (mobile == null || mobile.toString() == "") {
                           throw new Exception("未成功登录");
                         } else {
+                          // 登录成功
+                          final sp = SharedPreference.instance;
+                          sp.setString("sessid", sessid);
+                          sp.setString("token", token);
+                          sp.setString("uid", uid);
+                          sp.setString("un", un); // 保存信息
                           GlobalState.instance.user = info;
                           callback();
                           showDialog(
@@ -223,7 +220,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   );
                 },
-                child: Text("登入"),
+                child: Text("登录"),
               );
             },
           ),
@@ -238,6 +235,7 @@ class _LoginPageState extends State<LoginPage> {
       onChanged: () {},
       onWillPop: () async {},
     );
+    return form;
   }
 
   _aboutThis() {

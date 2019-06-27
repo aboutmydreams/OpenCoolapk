@@ -14,7 +14,7 @@ class GlobalState {
   }
 
   static GlobalState _instance;
-  static get instance => _instance;
+  static GlobalState get instance => _instance;
 
   static GlobalState reducer(GlobalState state, action) {
     switch (action) {
