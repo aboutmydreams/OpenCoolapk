@@ -26,12 +26,12 @@ class FeedItem extends StatelessWidget {
     return Container(
       width: double.maxFinite,
       padding: EdgeInsets.fromLTRB(
-          MediaQuery.of(context).size.width > 1000
-              ? ((MediaQuery.of(context).size.width - 1000) / 2)
+          MediaQuery.of(context).size.width > 1100
+              ? ((MediaQuery.of(context).size.width - 1100) / 2)
               : 0,
           0,
-          MediaQuery.of(context).size.width > 1000
-              ? ((MediaQuery.of(context).size.width - 1000) / 2)
+          MediaQuery.of(context).size.width > 1100
+              ? ((MediaQuery.of(context).size.width - 1100) / 2)
               : 0,
           0),
       child: FeedItemLoader.fromSingleData(context, entity),

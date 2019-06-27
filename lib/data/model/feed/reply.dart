@@ -22,6 +22,7 @@ class FeedReply {
 }
 
 class Data {
+  Map<String, dynamic> source;
   var id;
   var ftype;
   var fid;
@@ -100,6 +101,7 @@ class Data {
       this.replyRowsMore});
 
   Data.fromJson(Map<String, dynamic> json) {
+    source = json;
     id = json['id'];
     ftype = json['ftype'];
     fid = json['fid'];
