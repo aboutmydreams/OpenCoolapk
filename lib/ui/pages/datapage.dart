@@ -65,7 +65,7 @@ class _DataPageState extends State<DataPage>
 
   Future _fetchData({page: 1, lastItem: ""}) async {
     try {
-      print(page.toString() + "||" + lastItem);
+      // print(page.toString() + "||" + lastItem);
       var resp;
       switch (widget.dataFrom) {
         case DataFrom.indexV8:

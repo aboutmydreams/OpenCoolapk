@@ -3,6 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:opencoolapk/data/model/feed/indexV8_list.dart';
 import 'package:opencoolapk/data/model/feed/inlist_feed.dart';
 import 'package:opencoolapk/ui/pages/feed_detailpage.dart';
+import 'package:opencoolapk/ui/pages/widget/picbox.dart';
 
 class FeedFeedItem extends StatelessWidget {
   final Feed entity;
@@ -90,7 +91,12 @@ class FeedFeedItem extends StatelessWidget {
               onLinkTap: (v) {
                 print(v);
               }),
-          _buildContentImage(ctx, entity),
+          InkWell(child: _buildContentImage(ctx, entity), onTap: () {
+            // to picbox
+            Navigator.of(ctx).push(MaterialPageRoute(builder: (context) {
+              return PicBox(entity.picArr);
+            }));
+          },),
           entity.feedType == "comment"
               ? RawChip(
                   backgroundColor: Theme.of(ctx).primaryColor.withOpacity(0.1),
@@ -142,7 +148,7 @@ class FeedFeedItem extends StatelessWidget {
                       image: DecorationImage(
                         fit: BoxFit.cover,
                         image: Image.network(
-                          entity.pic,
+                          pic,
                           width: double.minPositive,
                           filterQuality: FilterQuality.low,
                         ).image,

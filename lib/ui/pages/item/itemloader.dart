@@ -11,6 +11,7 @@ import 'package:opencoolapk/ui/pages/item/feedfeed.dart';
 import 'package:opencoolapk/ui/pages/item/feedscroll_card.dart';
 import 'package:opencoolapk/ui/pages/item/iconlink_gridcard.dart';
 import 'package:opencoolapk/ui/pages/item/iconmini_gridcard.dart';
+import 'package:opencoolapk/ui/pages/item/imagecard.dart';
 import 'package:opencoolapk/ui/pages/item/imagetext_scrollcard.dart';
 import 'package:opencoolapk/ui/pages/item/refreshcard.dart';
 import 'package:opencoolapk/ui/pages/item/textlink_listcard.dart';
@@ -44,6 +45,9 @@ class FeedItemLoader {
     switch (entity.entityType) {
       case "card":
         switch (entity.entityTemplate) {
+          case "imageCard":
+            return ImageCardItem(entity.source);
+            break;
           case "textTitleScrollCard":
             return const SizedBox(); // 多半是广告
             break;
