@@ -23,11 +23,11 @@ class HomePageState extends State<HomePage>
 
   List<DataPage> pages = [
     DataPage(
-        "头条", Icons.home, DataFrom.indexV8, 0, GlobalKey(debugLabel: "头条")),
-    DataPage("热榜", Icons.local_hotel, DataFrom.indexV8, 1,
+        "头条", Icons.home, DataFrom.indexV8, 0, "", GlobalKey(debugLabel: "头条")),
+    DataPage("热榜", Icons.local_hotel, DataFrom.myFeeds, 1, "",
         GlobalKey(debugLabel: "热榜")),
-    DataPage(
-        "话题", Icons.comment, DataFrom.indexV8, 2, GlobalKey(debugLabel: "话题"))
+    DataPage("话题", Icons.comment, DataFrom.indexV8, 2, "",
+        GlobalKey(debugLabel: "话题"))
   ];
 
   @override

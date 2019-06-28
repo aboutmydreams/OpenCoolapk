@@ -1,3 +1,4 @@
+import 'package:opencoolapk/data/model/feed/indexV8_list.dart';
 import 'package:opencoolapk/data/model/user.dart';
 
 import 'api.dart';
@@ -26,6 +27,19 @@ class UserApi {
       }
     } catch (e) {
       return Future.error(e);
+    }
+  }
+
+  static Future<IndexV8List> getUserFeeds(uid, {page: "1", firstItem: "", lastItem: ""}) async {
+    try {
+      var resp = await Api.getI("/user/feedList", params: {
+        "uid": uid,
+        "firstItem": firstItem,
+        "lastItem": lastItem
+      });
+      return Future.value(IndexV8List.fromJson(resp.data));
+    } catch(er) {
+      return Future.error(er);
     }
   }
 }

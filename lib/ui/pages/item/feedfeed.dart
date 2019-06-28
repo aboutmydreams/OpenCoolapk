@@ -90,13 +90,37 @@ class FeedFeedItem extends StatelessWidget {
               linkStyle: TextStyle(color: Theme.of(ctx).primaryColor),
               onLinkTap: (v) {
                 print(v);
+                if (v.startsWith("http")) {
+                  showDialog(
+                      context: ctx,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("复制链接"),
+                          content: TextField(
+                            controller: TextEditingController(text: v),
+                            maxLines: 6,
+                          ),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text("ok"),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            )
+                          ],
+                        );
+                      });
+                }
               }),
-          InkWell(child: _buildContentImage(ctx, entity), onTap: () {
-            // to picbox
-            Navigator.of(ctx).push(MaterialPageRoute(builder: (context) {
-              return PicBox(entity.picArr);
-            }));
-          },),
+          InkWell(
+            child: _buildContentImage(ctx, entity),
+            onTap: () {
+              // to picbox
+              Navigator.of(ctx).push(MaterialPageRoute(builder: (context) {
+                return PicBox(entity.picArr);
+              }));
+            },
+          ),
           entity.feedType == "comment"
               ? RawChip(
                   backgroundColor: Theme.of(ctx).primaryColor.withOpacity(0.1),

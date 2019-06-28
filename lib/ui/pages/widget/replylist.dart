@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/image_properties.dart';
 import 'package:opencoolapk/data/api/feed.dart';
 import 'package:opencoolapk/data/model/feed/reply.dart' show Data;
+import 'package:opencoolapk/data/model/feed/reply.dart';
+import 'package:opencoolapk/redux/global.dart';
 import 'package:opencoolapk/ui/pages/widget/picbox.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -67,6 +70,114 @@ class _ReplyListState extends State<FeedReplyList> {
     await fetchData(page: page.toString(), refresh: false);
   }
 
+  Map<String, String> memoryKV = {}; // 内存中记录发送失败的回复
+
+  _buildReplyInput(var _replyId, String targetId, String targetName) {
+    final String replyId = _replyId.toString();
+    print(targetId + ":" + widget.feedId);
+    final TextEditingController _tec = TextEditingController(
+        text: memoryKV.containsKey(targetId) ? memoryKV[targetId] : "");
+    final GlobalKey<FormFieldState> _msgIptKey = GlobalKey();
+    final isFeed = replyId == widget.feedId ? true : false;
+    showBottomSheet(
+      context: context,
+      builder: (ctx) {
+        //TODO: 回复
+        return Card(
+          child: Container(
+            padding: EdgeInsets.only(left: 8, right: 8, bottom: 8),
+            width: double.maxFinite,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    IconButton(
+                      tooltip: "表情",
+                      icon: Icon(Icons.face),
+                      onPressed: () {
+                        // TODO: Handle click
+                      },
+                    ),
+                    Spacer(),
+                    OutlineButton(
+                      child: Text("回复楼主"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _buildReplyInput(widget.feedId, widget.feedId, "楼主");
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.keyboard_arrow_down),
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                      },
+                    ),
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: LimitedBox(
+                        maxHeight: 70,
+                        child: TextField(
+                          key: _msgIptKey,
+                          controller: _tec,
+                          decoration: InputDecoration(
+                              labelText: "回复 " + targetName + " :"),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: IconButton(
+                        onPressed: () {
+                          // TODO: Handle send
+                          var ovalue = _tec.text;
+                          _tec.clear();
+                          FeedApi.replyToFeed(targetId.toString(), ovalue,
+                                  replyType: isFeed
+                                      ? ReplyTypeEnum.feed
+                                      : ReplyTypeEnum.reply)
+                              .then((resp) {
+                            _tec.clear();
+                            setState(() {
+                              if (!isFeed) {
+                                replies.forEach((data) {
+                                  if (data.entityId.toString() == replyId) {
+                                    data.replyRows
+                                        .add(ReplyRows.fromJson(resp));
+                                  }
+                                });
+                              } else {
+                                replies.insert(0, Data.fromJson(resp));
+                              }
+                            });
+                          }).catchError((err) {
+                            memoryKV[targetId] = ovalue; // 记录
+                            Navigator.pop(ctx);
+                            Scaffold.of(ctx).showSnackBar(
+                              SnackBar(
+                                content: Text("发送失败: " + err.toString()),
+                              ),
+                            );
+                          });
+                        },
+                        icon: Icon(Icons.send),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
@@ -78,20 +189,17 @@ class _ReplyListState extends State<FeedReplyList> {
       itemCount: replies.length,
       itemBuilder: (context, pos) {
         return Container(
-          child: FeedReplyItem(replies[pos], nextPage, (targetId) {
+          child: FeedReplyItem(replies[pos], nextPage,
+              (replyId, targetId, targetName) {
             // 回复窗口构建;
-            showBottomSheet(
-                context: context,
-                builder: (context) {
-                  //TODO: 回复
-                  return Card(
-                    child: Container(
-                      padding: EdgeInsets.all(16),
-                      width: double.maxFinite,
-                      child: Text("回复功能待实现. targetId$targetId"),
-                    ),
-                  );
-                });
+            _buildReplyInput(replyId, targetId, targetName);
+          }, () {
+            // 删除事件
+            setState(() {
+              replies.remove(pos);
+            });
+          }, () {
+            setState(() {});
           }),
         );
       },
@@ -102,8 +210,12 @@ class _ReplyListState extends State<FeedReplyList> {
 class FeedReplyItem extends StatelessWidget {
   final Function loadMore;
   final Data replyData;
-  final Function(String targetId) onReplyInputBuild;
+  final Function(String replyId, String targetId, String targetName)
+      onReplyInputBuild;
+  final Function() onDelete;
+  final Function() setState;
   const FeedReplyItem(this.replyData, this.loadMore, this.onReplyInputBuild,
+      this.onDelete, this.setState,
       {Key key})
       : super(key: key);
 
@@ -125,7 +237,8 @@ class FeedReplyItem extends StatelessWidget {
         elevation: 0,
         child: InkWell(
           onTap: () {
-            onReplyInputBuild(replyData.entityId.toString());
+            onReplyInputBuild(replyData.id.toString(), replyData.id.toString(),
+                replyData.username);
           },
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,17 +322,39 @@ class FeedReplyItem extends StatelessWidget {
                     Container(
                       margin: EdgeInsets.only(bottom: 12),
                       color: Theme.of(context).primaryColor.withOpacity(0.07),
-                      child: _innerReply(onReplyInputBuild),
+                      child: _innerReply(replyData.id, onReplyInputBuild),
                     ),
                   ],
                 ),
               ),
               PopupMenuButton(
+                onSelected: (value) {
+                  switch (value) {
+                    case "删除":
+                      FeedApi.deleteReply(replyData.entityId).then((onValue) {
+                        onDelete(); // 通知上层删除
+                      }).catchError((onError) {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text("删除失败: " + onError.toString()),
+                        ));
+                      });
+                      break;
+                  }
+                },
                 itemBuilder: (context) {
+                  var userUid = "";
+                  if (GlobalState.instance.logged) {
+                    userUid = GlobalState.instance.user.uid.toString();
+                  }
                   return [
                     PopupMenuItem(
                       value: "test",
                       child: Text("test"),
+                    ),
+                    PopupMenuItem(
+                      enabled: replyData.uid.toString() == userUid,
+                      value: "删除",
+                      child: Text("删除"),
                     )
                   ];
                 },
@@ -231,10 +366,10 @@ class FeedReplyItem extends StatelessWidget {
     );
   }
 
-  _innerReply(onReplyInputBuild) {
+  _innerReply(replyId, onReplyInputBuild) {
     return Builder(
       builder: (context) {
-        var rereplies = replyData.replyRows;
+        var rereplies = replyData.replyRows ?? [];
         return ListView.separated(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
@@ -248,7 +383,42 @@ class FeedReplyItem extends StatelessWidget {
             var nowRereply = rereplies[pos];
             return InkWell(
                 onTap: () {
-                  onReplyInputBuild(nowRereply.entityId.toString());
+                  onReplyInputBuild(replyId.toString(),
+                      nowRereply.id.toString(), nowRereply.username);
+                },
+                onLongPress: () {
+                  if (GlobalState.instance.logged ? GlobalState.instance.user.uid.toString() != nowRereply.uid.toString() : true) {
+                    return;
+                  }
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("删除"),
+                          content: Text("删除这条回复?"),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text("确定"),
+                              onPressed: () {
+                                FeedApi.deleteReply(nowRereply.id.toString())
+                                    .then((value) {
+                                  replyData.replyRows.remove(pos);
+                                  setState();
+                                }).catchError((err) {
+                                  Scaffold.of(context).showSnackBar(SnackBar(content: Text(err.toString()),));
+                                });
+                                Navigator.pop(context);
+                              },
+                            ),
+                            FlatButton(
+                              child: Text("取消"),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            )
+                          ],
+                        );
+                      });
                 },
                 child: Html(
                   padding: EdgeInsets.all(4),

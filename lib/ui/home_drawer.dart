@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:opencoolapk/data/model/user.dart';
 import 'package:opencoolapk/redux/global.dart';
+import 'package:opencoolapk/ui/myfeed.dart';
 import 'package:opencoolapk/ui/setting.dart';
 
 import 'home.dart' show HomePageState;
@@ -133,7 +134,11 @@ class _DrawerContentState extends State<_DrawerContent> {
             "动态",
             style: TextStyle(color: tColor, fontWeight: FontWeight.bold),
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return MyFeedPage();
+            }));
+          },
         ),
         OutlineButton(
           child: Text(

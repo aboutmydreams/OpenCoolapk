@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:opencoolapk/data/api/feed.dart';
+import 'package:opencoolapk/data/api/user.dart';
 import 'package:opencoolapk/data/model/feed/indexV8_list.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'item/itemloader.dart';
 
-enum DataFrom { indexV8 }
+enum DataFrom { indexV8, myFeeds }
 
 class DataPage extends StatefulWidget {
   final String title;
   final IconData icon;
   final DataFrom dataFrom;
   final int pageIndex;
+  final dynamic extData;
   final GlobalKey<_DataPageState> key;
 
-  DataPage(this.title, this.icon, this.dataFrom, this.pageIndex, this.key)
+  DataPage(this.title, this.icon, this.dataFrom, this.pageIndex, this.extData, this.key)
       : super(key: key);
 
   @override
@@ -71,6 +73,9 @@ class _DataPageState extends State<DataPage>
         case DataFrom.indexV8:
           resp =
               await FeedApi.indexV8(page: page.toString(), lastItem: lastItem);
+          break;
+        case DataFrom.myFeeds:
+          resp = await UserApi.getUserFeeds(widget.extData.toString());
           break;
         default:
           resp =
