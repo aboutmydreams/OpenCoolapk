@@ -1,6 +1,7 @@
 import 'package:opencoolapk/data/model/feed/inlist_feed.dart' show ReplyRows, RelationRows;
 
 class FeedScrollCardTypeQuestion {
+  Map<String, dynamic> source;
   String entityType;
   String entityTemplate;
   String title;
@@ -25,6 +26,7 @@ class FeedScrollCardTypeQuestion {
       this.extraData});
 
   FeedScrollCardTypeQuestion.fromJson(Map<String, dynamic> json) {
+    source = json;
     entityType = json['entityType'];
     entityTemplate = json['entityTemplate'];
     title = json['title'];
@@ -61,6 +63,7 @@ class FeedScrollCardTypeQuestion {
 }
 
 class FeedScrollCardTypeAnswer {
+  Map<String, dynamic> source;
     String entityType;
   String entityTemplate;
   String title;
@@ -85,6 +88,7 @@ class FeedScrollCardTypeAnswer {
       this.extraData});
 
   FeedScrollCardTypeAnswer.fromJson(Map<String, dynamic> json) {
+    source = json;
     entityType = json['entityType'];
     entityTemplate = json['entityTemplate'];
     title = json['title'];
@@ -208,7 +212,7 @@ class Entities {
   List<ReplyRows> replyRows;
   int replyRowsCount;
   int replyRowsMore;
-  int iTid;
+  var iTid;
 
   Entities(
       {this.deviceTitle,
@@ -695,7 +699,7 @@ class AnswerEntity {
   List<ReplyRows> replyRows;
   int replyRowsCount;
   int replyRowsMore;
-  String sTid;
+  var sTid;
 
   AnswerEntity(
       {this.deviceTitle,

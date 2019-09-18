@@ -6,10 +6,10 @@ class ImageTextScrollCard {
   String title;
   String url;
   List<Entities> entities;
-  int entityId;
-  int entityFixed;
+  var entityId;
+  var entityFixed;
   String pic;
-  int lastupdate;
+  var lastupdate;
   String extraData;
 
   ImageTextScrollCard(
@@ -121,8 +121,8 @@ class Entities {
   String commentBlockNum;
   String blockStatus;
   String indexName;
-  int iQueryTotal;
-  int iQueryViewTotal;
+  var iQueryTotal;
+  var iQueryViewTotal;
   double dQuerySearchTime;
   String fetchType;
   String entityId;
@@ -147,9 +147,9 @@ class Entities {
   List<RelationRows> relationRows;
   TargetRow targetRow;
   List<ReplyRows> replyRows;
-  int replyRowsCount;
-  int replyRowsMore;
-  String sTid;
+  var replyRowsCount;
+  var replyRowsMore;
+  var sTid;
 
   Entities(
       {this.deviceTitle,
@@ -334,7 +334,7 @@ class Entities {
         ? new UserInfo.fromJson(json['userInfo'])
         : null;
     if (json['relationRows'] != null) {
-      relationRows = new List<Null>();
+      relationRows = new List<RelationRows>();
       json['relationRows'].forEach((v) {
         relationRows.add(new RelationRows.fromJson(v));
       });
@@ -343,7 +343,7 @@ class Entities {
         ? new TargetRow.fromJson(json['targetRow'])
         : null;
     if (json['replyRows'] != null) {
-      replyRows = new List<Null>();
+      replyRows = new List<ReplyRows>();
       json['replyRows'].forEach((v) {
         replyRows.add(new ReplyRows.fromJson(v));
       });

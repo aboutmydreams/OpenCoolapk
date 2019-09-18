@@ -3,20 +3,10 @@
 使用Flutter实现酷安app
 =,=
 
+# 注意! 本项目主要对desktop(或宽屏设备)进行支持，ui方面不适合竖屏使用~
+
     下载源码:
     git clone git@github.com:roykio/OpenCoolapk.git
-
-## android编译:
-    flutter build apk --release
-
-## android debug:
-    连接手机
-    允许usb调试
-    到本目录:
-        flutter run
-
-## 没有ios设备，也没有mac
-    故没有ios版编译教程
 
 ## 在pc平台运行:
     首先你要查看这两个项目
@@ -35,6 +25,22 @@
     
     hover还不支持release打包，性能会有限
 
+## android编译:
+    flutter build apk --release
+
+## android debug:
+    连接手机
+    允许usb调试
+    到本目录:
+        flutter run
+
+## 没有ios设备，也没有mac
+    故没有ios版编译教程
+
+## 预览
+    
+![image](https://raw.githubusercontent.com/roykio/OpenCoolapk/master/_pre/pre1.png)
+![image](https://raw.githubusercontent.com/roykio/OpenCoolapk/master/_pre/pre2.png)
 
 ## Getting Started
 

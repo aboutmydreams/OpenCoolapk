@@ -16,6 +16,9 @@ dependencies:
   pull_to_refresh: ^1.4.5
   carousel_slider: any
   flutter_html: any
+  redux: any
+  flutter_redux: any
+  shared_preferences: any
 
 dev_dependencies:
   flutter_test:
@@ -23,3 +26,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: SourceHanSansSC-Light
+      fonts:
+        - asset: fonts/SourceHanSansSC-Light.ttf
