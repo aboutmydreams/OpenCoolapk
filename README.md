@@ -1,6 +1,6 @@
 # Open Coolapk
 
-# 原作者 @Cyenoch , 不知道为何大佬删库了，导致我直接变成库拥有者。。flutter版酷安就由我继续开发下去了。。
+# 原作者 @Cyenoch , 不知道为何大佬删库了，导致我直接变成库拥有者。。flutter版酷安（可能）我会接坑。
 
 使用Flutter实现酷安app
 =,=
